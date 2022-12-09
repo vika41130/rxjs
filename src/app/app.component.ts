@@ -1,36 +1,33 @@
-import { Component } from '@angular/core';
-import { take, map, combineLatestAll } from 'rxjs/operators';
-import { interval } from 'rxjs';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { map, debounceTime } from 'rxjs/operators';
+import { fromEvent } from 'rxjs';
 
 @Component({
 	selector: 'app-root',
 	templateUrl: './app.component.html',
 	styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
 
-	source$: any;
-	example$: any;
-	result: any[] = [];
+	@ViewChild('input') input!: ElementRef;
+	// input: any;
+	value = '';
 	constructor() {
-		// emit every 1s, take 2
-		this.source$ = interval(1000).pipe(take(2));
-		// map each emitted value from source to interval observable that takes 5 values
-		this.example$ = this.source$.pipe(
-			map(val =>
-				interval(1000).pipe(
-					map(i => ` (${val} - ${i})`),
-					take(5)
-				)
-			)
-		);
-		this.example$
-			.pipe(combineLatestAll())
-			.subscribe((value: any) => {
-				this.result.push(value);
-				console.log(value);
-			});
 	}
-
+	
+	ngAfterViewInit(): void {
+		// this.input = document.getElementById('input');
+		fromEvent(this.input.nativeElement, 'keypress')
+		.pipe(
+			debounceTime(500),
+			map(
+				(value: any) => {
+					return value.target.value;
+				}
+			)
+		).subscribe(value => {
+			this.value = value; 
+		});
+	}
 
 }

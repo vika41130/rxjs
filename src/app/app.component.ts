@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { map, catchError } from 'rxjs/operators';
+import { map, mergeMap, take } from 'rxjs/operators';
 import { of, interval } from 'rxjs';
 
 @Component({
@@ -9,28 +9,23 @@ import { of, interval } from 'rxjs';
 })
 export class AppComponent implements OnInit {
 
-	value = '';
+	list: any[] = [];
 	constructor() {
 	}
 
 	ngOnInit(): void {
-		interval(1000)
-		.pipe(
-			map(
-				(value: any) => {
-					if (value == 4) {
-						throw 'err';
-					}
-					return value;
-				}
-			),
-			catchError(err => {
-				console.log(err);
-				return of(err);
-			})
-		).subscribe(value => {
-			this.value = value; 
+		const letters = of('a', 'b', 'c');
+		const result = letters.pipe(
+			mergeMap(x => interval(1000).pipe(
+				map(i => x+i),
+				take(5)
+			)),
+		);
+		result.subscribe(x => {
+			this.list.push(x);
+			console.log(x)
 		});
+		;
 	}
 
 }

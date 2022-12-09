@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { map, mergeMap, take } from 'rxjs/operators';
-import { of, interval } from 'rxjs';
+import { of, interval, concat } from 'rxjs';
 
 @Component({
 	selector: 'app-root',
@@ -9,23 +8,23 @@ import { of, interval } from 'rxjs';
 })
 export class AppComponent implements OnInit {
 
-	list: any[] = [];
 	constructor() {
 	}
 
 	ngOnInit(): void {
-		const letters = of('a', 'b', 'c');
-		const result = letters.pipe(
-			mergeMap(x => interval(1000).pipe(
-				map(i => x+i),
-				take(5)
-			)),
-		);
-		result.subscribe(x => {
-			this.list.push(x);
-			console.log(x)
-		});
-		;
+		// concat(
+		// 	of(1, 2, 3),
+		// 	of(4, 5, 6),
+		// 	of(7, 8, 9)
+		// ).subscribe(val => console.log(val));
+
+		// when source never completes, any subsequent observables never run
+			concat(
+				interval(1000),
+				of('This', 'Never', 'Runs')
+			)
+			// log: 1,2,3,4.....
+			.subscribe(console.log);
 	}
 
 }

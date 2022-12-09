@@ -1,30 +1,33 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { map, debounceTime } from 'rxjs/operators';
-import { fromEvent } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { map, catchError } from 'rxjs/operators';
+import { of, interval } from 'rxjs';
 
 @Component({
 	selector: 'app-root',
 	templateUrl: './app.component.html',
 	styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements OnInit {
 
-	@ViewChild('input') input!: ElementRef;
-	// input: any;
 	value = '';
 	constructor() {
 	}
-	
-	ngAfterViewInit(): void {
-		// this.input = document.getElementById('input');
-		fromEvent(this.input.nativeElement, 'keypress')
+
+	ngOnInit(): void {
+		interval(1000)
 		.pipe(
-			debounceTime(500),
 			map(
 				(value: any) => {
-					return value.target.value;
+					if (value == 4) {
+						throw 'err';
+					}
+					return value;
 				}
-			)
+			),
+			catchError(err => {
+				console.log(err);
+				return of(err);
+			})
 		).subscribe(value => {
 			this.value = value; 
 		});

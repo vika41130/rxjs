@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { of, endWith, finalize, startWith } from 'rxjs';
 
 @Component({
 	selector: 'app-root',
@@ -8,21 +7,73 @@ import { of, endWith, finalize, startWith } from 'rxjs';
 })
 export class AppComponent implements OnInit {
 
-	constructor() {}
+	constructor() {
+	}
 
 	ngOnInit(): void {
-		const source$ = of(1, 2);
-		source$
-		.pipe(
-			startWith(0),
-			endWith(-3, -4), // emit on completion
-			// do action on complete
-			finalize(() => {
-				console.log('finalize');
-			})
-		)
-		.subscribe(val => {
-			console.log(val);
-		});
+		this.testPromise();
+	}
+
+	private testPromise() {
+		// Promise.resolve('done')
+		// .then(
+		// 	(data) => {
+		// 		console.log(data);
+		// 		throw Error('fail');
+		// 		// return data;
+		// 	},
+		// 	// (err) => {
+		// 	// 	console.log(err);
+		// 	// }
+		// )
+		// .then(
+		// 	(data) => {
+		// 		console.log(data + '2');
+		// 	},
+		// 	// (err) => {
+		// 	// 	console.log(err);
+		// 	// }
+		// )
+		// .catch((err) => {
+		// 	console.error(err);
+		// 	// return 'catch';
+		// })
+		// .then((data) => {
+		// 	console.log("Do this, no matter what happened before");
+		// 	console.log(data);
+		// })
+		// const p = Promise.all([1, 2, 3]);
+		// const p2 = Promise.all([1, 2, 3, Promise.resolve(444)]);
+		// const p3 = Promise.all([1, 2, 3, Promise.reject(555)]);
+
+		// setTimeout(() => {
+		// 	console.log(p);
+		// 	console.log(p2);
+		// 	console.log(p3);
+		// });
+		// p2.then(
+		// 	(data) => {
+		// 		console.log({data});
+		// 	},
+		// 	(err) => {
+		// 		console.error(err);
+		// 	}
+		// );
+		// p3.then(
+		// 	(data) => {
+		// 		console.log({data});
+		// 	},
+		// 	(err) => {
+		// 		console.error({err});
+		// 	}
+		// );
+		Promise.race([]).then(
+			(data) => {
+				console.log({data});
+			},
+			(err) => {
+				console.log({err});
+			}
+		);
 	}
 }
